@@ -1,194 +1,194 @@
-# 🗺️ خطة إتقان Flutter & Dart بعمق
+# 🗺️ Flutter & Dart Deep Mastery Plan
 
-> **معدل المذاكرة المبدئي:** 30 دقيقة – ساعة يوميًا (مرن حسب الشغل)
-> **الفلسفة:** Learn → Understand → Practice → Build → Review
-> **القاعدة الذهبية:** لو حسيت إن موضوع محتاج وقت أطول، خده. الجدول ده تقريبي مش مقدس.
-
----
-
-## 📌 قبل ما تبدأ — قواعد مهمة
-
-1. **الشهر الأول = Main Track بس.** من غير CS ومن غير قراءة كتاب. الهدف الأساسي إنك تثبت عادة المذاكرة اليومية الأول، بعد كده نضيف الباقي.
-2. **كل ما تخلص Topic، اكتب 3-5 سطور بلغتك انت** (مش نسخ ولزق) — تلخيص بسيط في ملف Notes. ده اللي هيفرق بين "قرأت" و"فهمت".
-3. **متفتحش أكتر من مصدر واحد للـTopic الواحد.** اختار مصدر (فيديو/مقال/توثيق رسمي) وكمله، بعدين لو حابب تعمق دور على تاني.
-4. **الأسبوع اللي حاسس فيه إنك تعبان أو الشغل زحمة → قلل، متوقفش خالص.** حتى 15 دقيقة يوميًا أفضل من صفر.
+> **Initial study pace:** 30 minutes – 1 hour daily (flexible around work)
+> **Philosophy:** Learn → Understand → Practice → Build → Review
+> **Golden rule:** If a topic needs more time, take it. This schedule is approximate, not sacred.
 
 ---
 
-## المرحلة صفر — أسبوع التأسيس (اختياري بس مفيد)
+## 📌 Before You Start — Important Rules
 
-**المدة:** 3-4 أيام، 20-30 دقيقة يوميًا
-
-- جهز مكان لكتابة الـNotes (Notion / Obsidian / حتى ملف Markdown عادي)
-- اعمل فولدر مشروع Flutter اسمه `flutter-playground` هتستخدمه في كل تجربة عملية طول الرحلة
-- اقرأ نظرة عامة سريعة عن الخطة كلها (اللي كتبتها انت) عشان تبقى الصورة الكبيرة واضحة في دماغك
+1. **Month 1 = Main Track only.** No CS, no book reading. The main goal is to establish the daily study habit first; everything else gets added later.
+2. **Every time you finish a topic, write 3-5 lines in your own words** (not copy-paste) — a simple summary in a Notes file. This is what separates "read" from "understood."
+3. **Don't open more than one source for the same topic.** Pick a source (video/article/official docs) and finish it; if you want to go deeper afterward, look for another.
+4. **In weeks you feel tired or work is busy → reduce, but never stop completely.** Even 15 minutes a day is better than zero.
 
 ---
 
-## المرحلة ١ — Advanced Dart & Concurrency
+## Phase Zero — Foundation Week (Optional but Useful)
 
-**المدة الكلية المقترحة:** 5-6 أسابيع | **يوميًا:** 30-45 دقيقة، 4-5 أيام/أسبوع
+**Duration:** 3-4 days, 20-30 minutes daily
 
-| الأسبوع | الموضوع | تفاصيل المذاكرة | وقت تقريبي |
+- Set up a place to write Notes (Notion / Obsidian / even a plain Markdown file)
+- Create a Flutter project folder called `flutter-playground` to use for every hands-on experiment throughout the journey
+- Read a quick overview of the whole plan (the one you wrote) so the big picture is clear in your mind
+
+---
+
+## Phase 1 — Advanced Dart & Concurrency
+
+**Total suggested duration:** 5-6 weeks | **Daily:** 30-45 minutes, 4-5 days/week
+
+| Week | Topic | Study Details | Approx. Time |
 |---|---|---|---|
-| 1 | Event Loop | Single-threaded Dart، Sync code، Event Queue، Microtask Queue، ترتيب التنفيذ. **تمرين:** اكتب كود فيه print + Future + scheduleMicrotask وتوقع الـOutput قبل التشغيل (اعمل 5 أمثلة مختلفة) | 3-4 أيام × 30د |
-| 2 | Microtasks vs Event Queue | Future.microtask, scheduleMicrotask, Future(), Future.delayed — إمتى تستخدم كل واحدة وليه | 2-3 أيام × 30د |
-| 2-3 | Futures & Async عميق | Future chaining, Error propagation, Future.wait, Parallel vs Sequential, Timeout | 3-4 أيام × 30-45د |
-| 3-4 | Streams Basics | Single Subscription vs Broadcast, Listen/Pause/Resume/Cancel, Error handling, Lifecycle | 4 أيام × 30-45د |
-| 4 | Stream Controllers | StreamController, broadcast, Sink, إمتى فعلًا تحتاجه (مش كل حاجة Stream) | 3 أيام × 30-45د |
-| 5 | Advanced Streams | async*, yield, yield*, transformers, combining streams. **مشروع صغير:** Mini app بسيط يعتمد على Stream (زي عداد أو Search debounce) | 4-5 أيام × 45د-1س |
-| 5-6 | Isolates | ليه الـUI بيعلق، compute, Isolate.spawn, SendPort/ReceivePort. **تمرين عملي إجباري:** اعمل عملية تقيلة (loop كبير أو حساب) على الـMain Thread وشوف تأثيرها، بعدين انقلها لـIsolate وقارن | 4-5 أيام × 45د-1س |
+| 1 | Event Loop | Single-threaded Dart, sync code, Event Queue, Microtask Queue, execution order. **Exercise:** write code with print + Future + scheduleMicrotask and predict the output before running it (do 5 different examples) | 3-4 days × 30 min |
+| 2 | Microtasks vs Event Queue | Future.microtask, scheduleMicrotask, Future(), Future.delayed — when to use each and why | 2-3 days × 30 min |
+| 2-3 | Futures & Async in Depth | Future chaining, error propagation, Future.wait, parallel vs sequential, timeout | 3-4 days × 30-45 min |
+| 3-4 | Streams Basics | Single Subscription vs Broadcast, Listen/Pause/Resume/Cancel, error handling, lifecycle | 4 days × 30-45 min |
+| 4 | Stream Controllers | StreamController, broadcast, Sink, when you actually need one (not everything needs to be a Stream) | 3 days × 30-45 min |
+| 5 | Advanced Streams | async*, yield, yield*, transformers, combining streams. **Mini project:** a small app based on Streams (e.g., a counter or search debounce) | 4-5 days × 45 min-1 hr |
+| 5-6 | Isolates | Why the UI freezes, compute, Isolate.spawn, SendPort/ReceivePort. **Mandatory hands-on exercise:** run a heavy operation (large loop or computation) on the Main Thread and observe its effect, then move it to an Isolate and compare | 4-5 days × 45 min-1 hr |
 
-> 🎯 **نهاية المرحلة:** اعمل ملخص واحد صفحة "إمتى أستخدم Future / Stream / Isolate" — دي أهم حاجة هتفرق معاك عمليًا.
+> 🎯 **End of phase:** write a one-page summary "When do I use Future / Stream / Isolate" — this is the thing that will make the biggest practical difference.
 
 ---
 
-## المرحلة ٢ — Advanced Dart Language Features
+## Phase 2 — Advanced Dart Language Features
 
-**المدة:** 2-3 أسابيع | **يوميًا:** 30-40 دقيقة
+**Duration:** 2-3 weeks | **Daily:** 30-40 minutes
 
-| الأسبوع | الموضوع | تفاصيل | وقت |
+| Week | Topic | Details | Time |
 |---|---|---|---|
-| 1 | Generics | Generic classes/methods, Type constraints, استخدامها في Architecture (مش `Box<T>` وخلاص) | 2-3 أيام × 30د |
-| 1-2 | Sealed Classes + Records | sealed, base, interface, final والفرق بينهم، Exhaustiveness. Records: Positional/Named، Returning multiple values. **طبقها في:** API states (Loading/Success/Error) | 3-4 أيام × 30-40د |
-| 2 | Pattern Matching | Object patterns, Destructuring, Switch expressions, Guard clauses. **اربطها بـSealed Classes** في مثال عملي واحد كامل | 3 أيام × 30-40د |
-| 3 | Memory Management | Stack vs Heap, GC, Closures وتأثيرها، StreamSubscription/Controller leaks، dispose() | 3-4 أيام × 30-40د |
+| 1 | Generics | Generic classes/methods, type constraints, using them in architecture (not just `Box<T>`) | 2-3 days × 30 min |
+| 1-2 | Sealed Classes + Records | sealed, base, interface, final and the differences between them, exhaustiveness. Records: positional/named, returning multiple values. **Apply to:** API states (Loading/Success/Error) | 3-4 days × 30-40 min |
+| 2 | Pattern Matching | Object patterns, destructuring, switch expressions, guard clauses. **Connect it to Sealed Classes** in one complete practical example | 3 days × 30-40 min |
+| 3 | Memory Management | Stack vs Heap, GC, closures and their impact, StreamSubscription/Controller leaks, dispose() | 3-4 days × 30-40 min |
 
 ---
 
-## المرحلة ٣ — Flutter Internals & Rendering
+## Phase 3 — Flutter Internals & Rendering
 
-**المدة:** 4-5 أسابيع | **يوميًا:** 30-45 دقيقة
+**Duration:** 4-5 weeks | **Daily:** 30-45 minutes
 
-| الأسبوع | الموضوع | تفاصيل | وقت |
+| Week | Topic | Details | Time |
 |---|---|---|---|
-| 1 | الأشجار الثلاثة | Widget Tree → Element Tree → RenderObject Tree. ليه Widget immutable، Element بيعمل إيه، RenderObject مسؤول عن إيه | 3-4 أيام × 30د |
-| 1-2 | BuildContext | إيه هو فعلًا، علاقته بالـElement Tree، `.of(context)` بيشتغل إزاي فعليًا | 2 أيام × 30د |
-| 2 | Widget Lifecycle | initState → didChangeDependencies → build → didUpdateWidget → deactivate → dispose. **تمرين:** Logging على كل واحدة وشوفها بتشتغل إمتى فعليًا | 2-3 أيام × 30د |
-| 2-3 | Keys | ValueKey, ObjectKey, UniqueKey, GlobalKey — إمتى فعلًا تحتاجهم | 2 أيام × 30د |
-| 3 | Rendering Pipeline | Build → Layout → Paint → Compositing → Rasterization. الفرق بين Rebuild/Relayout/Repaint | 3-4 أيام × 30-45د |
-| 4 | Engine & Platforms | Flutter Engine, Dart Runtime, Impeller/Skia، ليه مفيش Native Widgets عادة | 3 أيام × 30-45د |
-| 4-5 | Flutter Web | Architecture, Rendering على الويب، الفرق عن React | 2-3 أيام × 30د |
+| 1 | The Three Trees | Widget Tree → Element Tree → RenderObject Tree. Why Widget is immutable, what Element does, what RenderObject is responsible for | 3-4 days × 30 min |
+| 1-2 | BuildContext | What it really is, its relationship to the Element Tree, how `.of(context)` actually works | 2 days × 30 min |
+| 2 | Widget Lifecycle | initState → didChangeDependencies → build → didUpdateWidget → deactivate → dispose. **Exercise:** add logging to each one and observe when they actually fire | 2-3 days × 30 min |
+| 2-3 | Keys | ValueKey, ObjectKey, UniqueKey, GlobalKey — when you actually need them | 2 days × 30 min |
+| 3 | Rendering Pipeline | Build → Layout → Paint → Compositing → Rasterization. The difference between Rebuild/Relayout/Repaint | 3-4 days × 30-45 min |
+| 4 | Engine & Platforms | Flutter Engine, Dart Runtime, Impeller/Skia, why there are usually no native widgets | 3 days × 30-45 min |
+| 4-5 | Flutter Web | Architecture, rendering on the web, the difference from React | 2-3 days × 30 min |
 
 ---
 
-## المرحلة ٤ — 🎨 Animations & Custom Paint (الجزء اللي طلبته)
+## Phase 4 — 🎨 Animations & Custom Paint (The Part You Asked For)
 
-**المدة:** 3-4 أسابيع | **يوميًا:** 30-45 دقيقة
+**Duration:** 3-4 weeks | **Daily:** 30-45 minutes
 
-> رتبتها هنا بالظبط لأنها مبنية مباشرة على فهمك للـRendering Pipeline اللي خلصته في المرحلة اللي فاتت، وهي كمان تمهيد طبيعي لمرحلة الـPerformance اللي جاية.
+> Placed exactly here because it builds directly on your understanding of the Rendering Pipeline from the previous phase, and it's a natural lead-in to the upcoming Performance phase.
 
-| الأسبوع | الموضوع | تفاصيل | وقت |
+| Week | Topic | Details | Time |
 |---|---|---|---|
-| 1 | Implicit Animations | AnimatedContainer, AnimatedOpacity, AnimatedPositioned, AnimatedSwitcher, TweenAnimationBuilder — إمتى تكفي ومتى متكفيش | 3-4 أيام × 30د |
-| 1-2 | Explicit Animations الأساسيات | AnimationController, Tween, Curve, Ticker/TickerProvider, addListener | 3-4 أيام × 30-45د |
-| 2 | AnimatedBuilder vs AnimatedWidget | الفرق، الأداء، إمتى تستخدم كل واحد. **تمرين:** اعمل نفس الأنيميشن بالطريقتين وقارن | 2-3 أيام × 30-45د |
-| 2-3 | Hero & Staggered Animations | Hero animations بين الصفحات، Staggered animations (تسلسل حركات مترابطة) | 3 أيام × 30-45د |
-| 3 | Physics-based Animations | SpringSimulation, friction, fling — نظرة تعريفية وتطبيق بسيط | 2 أيام × 30د |
-| 3-4 | Custom Paint Basics | Canvas API, Paint object, CustomPainter, `shouldRepaint` — إمتى بترجع true/false وليه مهم للأداء | 3-4 أيام × 30-45د |
-| 4 | Custom Paint متقدم | رسم Shapes/Paths, PathMetrics, Clipping. **مشروع صغير:** ارسم شكل مخصص (زي progress circle أو chart بسيط) بـCustomPainter من الصفر | 3-4 أيام × 45د-1س |
+| 1 | Implicit Animations | AnimatedContainer, AnimatedOpacity, AnimatedPositioned, AnimatedSwitcher, TweenAnimationBuilder — when they're enough and when they're not | 3-4 days × 30 min |
+| 1-2 | Explicit Animations Basics | AnimationController, Tween, Curve, Ticker/TickerProvider, addListener | 3-4 days × 30-45 min |
+| 2 | AnimatedBuilder vs AnimatedWidget | The difference, performance, when to use each. **Exercise:** build the same animation both ways and compare | 2-3 days × 30-45 min |
+| 2-3 | Hero & Staggered Animations | Hero animations between pages, staggered animations (sequenced, related movements) | 3 days × 30-45 min |
+| 3 | Physics-based Animations | SpringSimulation, friction, fling — an introductory look and simple application | 2 days × 30 min |
+| 3-4 | Custom Paint Basics | Canvas API, Paint object, CustomPainter, `shouldRepaint` — when it returns true/false and why it matters for performance | 3-4 days × 30-45 min |
+| 4 | Advanced Custom Paint | Drawing shapes/paths, PathMetrics, clipping. **Mini project:** draw a custom shape (e.g., a progress circle or simple chart) with CustomPainter from scratch | 3-4 days × 45 min-1 hr |
 
-> 🎯 **نهاية المرحلة:** اعمل مكون Animation واحد (مثلاً custom loading indicator أو progress بار) من الصفر بدون أي package جاهز.
+> 🎯 **End of phase:** build one animation component (e.g., a custom loading indicator or progress bar) from scratch without any ready-made package.
 
 ---
 
-## المرحلة ٥ — Software Architecture Deep Dive
+## Phase 5 — Software Architecture Deep Dive
 
-**المدة:** 3-4 أسابيع | **يوميًا:** 30-45 دقيقة
+**Duration:** 3-4 weeks | **Daily:** 30-45 minutes
 
-| الأسبوع | الموضوع | تفاصيل | وقت |
+| Week | Topic | Details | Time |
 |---|---|---|---|
-| 1 | Clean Architecture Trade-offs | مش إعادة الأساسيات — ركز على: إمتى مفيدة، إمتى Overengineering، هل كل Feature محتاج Use Case | 3-4 أيام × 30-45د |
-| 1-2 | SOLID عمليًا | كل مبدأ: Problem → Bad Code → ليه مشكلة → Refactor → Solution (استخدم كود من مشروعك انت) | 4-5 أيام × 30-45د |
-| 2-3 | Design Patterns | Factory, Strategy, Adapter, Observer, Builder, Repository, DI — كل واحد بمثال من مشروع حقيقي | 4-5 أيام × 30-45د |
-| 3-4 | Architecture للمشاريع الكبيرة | Feature-first, Modularization, Shared core, Circular dependencies, Monorepo basics | 3-4 أيام × 30-45د |
+| 1 | Clean Architecture Trade-offs | Not re-covering the basics — focus on: when it's useful, when it's overengineering, does every feature need a Use Case | 3-4 days × 30-45 min |
+| 1-2 | SOLID in Practice | Each principle: Problem → Bad Code → Why It's a Problem → Refactor → Solution (use code from your own project) | 4-5 days × 30-45 min |
+| 2-3 | Design Patterns | Factory, Strategy, Adapter, Observer, Builder, Repository, DI — each with an example from a real project | 4-5 days × 30-45 min |
+| 3-4 | Architecture for Large Projects | Feature-first, modularization, shared core, circular dependencies, monorepo basics | 3-4 days × 30-45 min |
 
 ---
 
-## المرحلة ٦ — Performance ⚡ + Flutter DevTools
+## Phase 6 — Performance ⚡ + Flutter DevTools
 
-**المدة:** 4-5 أسابيع | **يوميًا:** 30-45 دقيقة
+**Duration:** 4-5 weeks | **Daily:** 30-45 minutes
 
-| الأسبوع | الموضوع | تفاصيل | وقت |
+| Week | Topic | Details | Time |
 |---|---|---|---|
-| 1 | Rebuilds & Rendering Cost | إيه اللي بيعمل Rebuild، إمتى بيبقى مشكلة فعلًا، const، Widget splitting، RepaintBoundary | 3-4 أيام × 30-45د |
-| 2 | Lists & Images | Lazy rendering, Pagination, Image optimization/caching | 2-3 أيام × 30-45د |
-| 2-3 | DevTools: Inspector & Performance View | Widget Tree debugging, UI Thread vs Raster Thread, Jank, Frame budget (16ms) | 4 أيام × 30-45د |
-| 3-4 | DevTools: CPU & Memory Profiler | لقاء Function بطيئة، Memory usage، Object allocation، اكتشاف الـleaks عمليًا | 4-5 أيام × 45د-1س |
-| 4-5 | تطبيق عملي كامل | **إجباري:** اعمل مشكلة Performance بنفسك (heavy rebuild أو leak) → افتحها في DevTools → سجلها → حلها → قارن قبل/بعد | 4-5 أيام × 45د-1س |
+| 1 | Rebuilds & Rendering Cost | What causes a rebuild, when it's actually a problem, const, widget splitting, RepaintBoundary | 3-4 days × 30-45 min |
+| 2 | Lists & Images | Lazy rendering, pagination, image optimization/caching | 2-3 days × 30-45 min |
+| 2-3 | DevTools: Inspector & Performance View | Widget Tree debugging, UI Thread vs Raster Thread, jank, frame budget (16ms) | 4 days × 30-45 min |
+| 3-4 | DevTools: CPU & Memory Profiler | Finding slow functions, memory usage, object allocation, discovering leaks hands-on | 4-5 days × 45 min-1 hr |
+| 4-5 | Full Hands-on Application | **Mandatory:** create a performance problem yourself (heavy rebuild or leak) → open it in DevTools → record it → fix it → compare before/after | 4-5 days × 45 min-1 hr |
 
 ---
 
-## المرحلة ٧ — Testing 🧪
+## Phase 7 — Testing 🧪
 
-**المدة:** 3-4 أسابيع | **يوميًا:** 30-45 دقيقة
+**Duration:** 3-4 weeks | **Daily:** 30-45 minutes
 
-| الأسبوع | الموضوع | تفاصيل | وقت |
+| Week | Topic | Details | Time |
 |---|---|---|---|
-| 1 | Basics | ليه Testing، Test Pyramid، Arrange/Act/Assert، الفرق بين الأنواع الثلاثة | 2 أيام × 30د |
-| 1-2 | Unit Testing | Validators, Use Cases, Business logic → بعدها Repositories + Mocking | 4 أيام × 30-45د |
-| 2-3 | Widget Testing | Widget ظاهر، User interaction، Forms، Loading/Error states | 3-4 أيام × 30-45د |
-| 3 | Integration Testing | Flow كامل (Login → API → Home → Logout) | 3 أيام × 45د-1س |
-| 3-4 | تطبيق حقيقي | اختار مشروعك الحالي وضيف Testing تدريجيًا لـFeature واحدة كاملة (Unit → Widget → Integration) | مستمر |
+| 1 | Basics | Why testing, Test Pyramid, Arrange/Act/Assert, the difference between the three types | 2 days × 30 min |
+| 1-2 | Unit Testing | Validators, use cases, business logic → then repositories + mocking | 4 days × 30-45 min |
+| 2-3 | Widget Testing | Visible widgets, user interaction, forms, loading/error states | 3-4 days × 30-45 min |
+| 3 | Integration Testing | A full flow (Login → API → Home → Logout) | 3 days × 45 min-1 hr |
+| 3-4 | Real Application | Pick your current project and gradually add testing to one complete feature (Unit → Widget → Integration) | Ongoing |
 
 ---
 
-## 💻 المسار الموازي — CS + Problem Solving
+## 💻 Parallel Track — CS + Problem Solving
 
-**يبدأ من الشهر الثاني** (بعد ما تثبت عادة الـMain Track)
-**المعدل:** 2-3 أيام/أسبوع، 25-30 دقيقة
+**Starts from Month 2** (after the daily habit is established in the Main Track)
+**Pace:** 2-3 days/week, 25-30 minutes
 
-| الفترة | الموضوعات |
+| Period | Topics |
 |---|---|
-| الشهر 2-3 | Big O, Arrays, Strings, Hash Maps, Stack, Queue, Recursion |
-| الشهر 3-4 | Linked Lists, Trees, Binary Search, Sorting, Two Pointers |
-| الشهر 5-6 | Graphs, BFS, DFS, Dynamic Programming basics |
+| Months 2-3 | Big O, Arrays, Strings, Hash Maps, Stack, Queue, Recursion |
+| Months 3-4 | Linked Lists, Trees, Binary Search, Sorting, Two Pointers |
+| Months 5-6 | Graphs, BFS, DFS, Dynamic Programming basics |
 
 ---
 
-## 📚 القراءة
+## 📚 Reading
 
-**يبدأ من الشهر الثاني، 15-20 دقيقة في الأيام اللي عندك طاقة (مش يومي)**
+**Starts from Month 2, 15-20 minutes on days you have energy (not daily)**
 
-- كتاب واحد بس تقني، عملي أكتر من أكاديمي (مش Introduction to Algorithms كبداية)
-- Clean Code بالتوازي لو حابب — اقرأ الفكرة، طبقها، شوف الـTrade-offs بنفسك
+- One technical book only, practical rather than academic (not something like Introduction to Algorithms as a starting point)
+- Clean Code in parallel if you like — read the idea, apply it, see the trade-offs yourself
 
 ---
 
-## 🗓️ الجدول الأسبوعي المقترح (من الشهر الثاني وبعده)
+## 🗓️ Suggested Weekly Schedule (From Month 2 Onward)
 
-| اليوم | النشاط | الوقت |
+| Day | Activity | Time |
 |---|---|---|
-| السبت | Main Track | 30-45 د |
-| الأحد | Main Track | 30-45 د |
-| الاثنين | CS | 25-30 د |
-| الثلاثاء | Main Track | 30-45 د |
-| الأربعاء | CS أو Reading | 25-30 د |
-| الخميس | Main Track | 30-45 د |
-| الجمعة | Review للأسبوع + كتابة Notes | 20-30 د |
+| Saturday | Main Track | 30-45 min |
+| Sunday | Main Track | 30-45 min |
+| Monday | CS | 25-30 min |
+| Tuesday | Main Track | 30-45 min |
+| Wednesday | CS or Reading | 25-30 min |
+| Thursday | Main Track | 30-45 min |
+| Friday | Weekly review + writing notes | 20-30 min |
 
-> الشهر الأول: امسح CS والقراءة من الجدول واستخدم أيامهم كـReview إضافي أو راحة.
+> Month 1: remove CS and reading from the schedule and use their days as extra review or rest.
 
 ---
 
-## ⏱️ ملخص الزمن الكلي التقريبي
+## ⏱️ Approximate Total Time Summary
 
-| المرحلة | المدة |
+| Phase | Duration |
 |---|---|
-| صفر — تأسيس | أسبوع |
-| ١ — Advanced Dart & Concurrency | 5-6 أسابيع |
-| ٢ — Advanced Language Features | 2-3 أسابيع |
-| ٣ — Flutter Internals & Rendering | 4-5 أسابيع |
-| ٤ — Animations & Custom Paint | 3-4 أسابيع |
-| ٥ — Architecture | 3-4 أسابيع |
-| ٦ — Performance & DevTools | 4-5 أسابيع |
-| ٧ — Testing | 3-4 أسابيع |
-| **الإجمالي** | **~26-32 أسبوع (6-7.5 شهور)** بمعدل نصف ساعة-ساعة يوميًا |
+| 0 — Foundation | 1 week |
+| 1 — Advanced Dart & Concurrency | 5-6 weeks |
+| 2 — Advanced Language Features | 2-3 weeks |
+| 3 — Flutter Internals & Rendering | 4-5 weeks |
+| 4 — Animations & Custom Paint | 3-4 weeks |
+| 5 — Architecture | 3-4 weeks |
+| 6 — Performance & DevTools | 4-5 weeks |
+| 7 — Testing | 3-4 weeks |
+| **Total** | **~26-32 weeks (6-7.5 months)** at a pace of half an hour to an hour daily |
 
 ---
 
-## ✅ قاعدة الاستمرارية (الأهم من الجدول كله)
+## ✅ The Consistency Rule (More Important Than the Whole Schedule)
 
-- كل نهاية أسبوع: اسأل نفسك سؤال واحد بس — **"لو حد سألني، أقدر أشرحله الموضوع ده من غير ما أفتح النوتس؟"**
-- لو الإجابة لأ، خد يوم زيادة في نفس الموضوع بدل ما تكمل.
-- ماتقارنش نفسك بسرعة أي حد تاني. الهدف فهم حقيقي مش سرعة إنهاء Checklist.
+- At the end of every week, ask yourself one question — **"If someone asked me, could I explain this topic without opening my notes?"**
+- If the answer is no, spend an extra day on the same topic instead of moving on.
+- Don't compare yourself to how fast anyone else is going. The goal is real understanding, not speed-running a checklist.
