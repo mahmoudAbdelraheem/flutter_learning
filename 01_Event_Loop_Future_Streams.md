@@ -1,6 +1,6 @@
-# 📘 Summary: Event Loop & Futures & Streams
+# 📘 Summary: Event Loop & Futures & Streams & Isolates
 
-> Part 1 of the Advanced Dart & Concurrency journey
+> Advanced Dart & Concurrency journey
 
 ---
 
@@ -56,6 +56,7 @@ void main() {
 ```
 
 **Output:**
+
 ```
 A
 F
@@ -90,6 +91,7 @@ void myFunction() async {
 ```
 
 If you actually want `main` to wait for `myFunction`, you need to `await` at the call site itself:
+
 ```dart
 void main() async {
   print('start');
@@ -103,6 +105,7 @@ void main() async {
 ### Sequential vs Parallel Execution
 
 **Sequential** — each `await` waits for the previous one to finish:
+
 ```dart
 final user = await fetchUser();              // 1s
 final notifications = await fetchNotifications(); // 1s
@@ -111,12 +114,14 @@ final settings = await fetchSettings();       // 1s
 ```
 
 Use this when the next request **needs the result** of the previous one:
+
 ```dart
 final user = await fetchUser();
 final posts = await fetchPostsByUserId(user.id); // needs user.id
 ```
 
 **Parallel** — `Future.wait` runs everything together:
+
 ```dart
 final results = await Future.wait([
   fetchUser(),
@@ -137,6 +142,7 @@ Use this when the requests are **independent** of each other.
 ### An Alternative Real-World Design (Independent Cards)
 
 For a scenario like a Dashboard with multiple cards, **independence is often better than bundling with `Future.wait`**:
+
 - Each Card/Feature manages its own Loading/Success/Error state (usually via a separate BLoC/Cubit)
 - Shared headers (Auth Token, ...) are handled via a **Dio Interceptor** instead of duplicating logic
 - Overall coordination (e.g. "Refresh everything") is handled by a **BLoC** as a higher layer, which decides when to use Parallel and when to keep things independent
@@ -147,10 +153,10 @@ For a scenario like a Dashboard with multiple cards, **independence is often bet
 
 ### The Precise Definition
 
-| | Value | How many times |
-|---|---|---|
-| **Future** | one value (Success/Error) | once, then it's done |
-| **Stream** | a sequence of values | zero or more, over time |
+|            | Value                     | How many times          |
+| ---------- | ------------------------- | ----------------------- |
+| **Future** | one value (Success/Error) | once, then it's done    |
+| **Stream** | a sequence of values      | zero or more, over time |
 
 ```
 Future:   ────────●
@@ -169,15 +175,18 @@ Stream:   ──●────●──────●───●──
 ### Single Subscription vs Broadcast
 
 **Single Subscription** (the default):
+
 ```dart
 final controller = StreamController<int>();
 controller.stream.listen((d) => print('L1: $d'));
 controller.stream.listen((d) => print('L2: $d'));
 // ❌ Exception: "Stream has already been listened to"
 ```
+
 Only **one listener at a time** is allowed.
 
 **Broadcast**:
+
 ```dart
 final controller = StreamController<int>.broadcast();
 controller.stream.listen((d) => print('L1: $d'));
@@ -200,6 +209,7 @@ subscription.cancel();  // closes it entirely, no going back
 ```
 
 **The critical rule:**
+
 > In a StatefulWidget's `dispose()` → **always use `cancel()`**. Never `pause()`, because the State will be destroyed completely and nothing will ever call `resume()` again — this is a memory leak (a subscription left paused forever).
 
 `pause()`/`resume()` are used in a different context: when you're **still holding onto the subscription** and can return to it later (e.g. App Lifecycle: pause when the app goes to background, resume when it comes back).
@@ -244,10 +254,10 @@ class CounterController {
 
 ### Two Different Things to Clean Up (both are needed)
 
-| Operation | Used by | When |
-|---|---|---|
+| Operation               | Used by                       | When                                     |
+| ----------------------- | ----------------------------- | ---------------------------------------- |
 | `subscription.cancel()` | The listening side (Listener) | When you're done caring about the stream |
-| `controller.close()` | The producing side (Producer) | When nothing will ever be added again |
+| `controller.close()`    | The producing side (Producer) | When nothing will ever be added again    |
 
 **A very common bug:** forgetting either one = a memory leak. The full correct example:
 
@@ -287,6 +297,7 @@ class _SearchScreenState extends State<SearchScreen> {
 In day-to-day BLoC work, you'll **almost never need it** — `emit(state)` is essentially `controller.add()` at a higher level, and the Bloc manages its own lifecycle.
 
 You actually need it when:
+
 1. You're building a **wrapper** around something that isn't a Stream to begin with (e.g. converting a callback-based API into a Stream)
 2. You're building something like **Debounce** manually from scratch
 3. You're working at a low level (Data Source layer, your own package)
@@ -320,7 +331,7 @@ searchStream
 
 ---
 
-## ✅ Key Takeaways From This Part
+## ✅ Key Takeaways: Event Loop, Futures & Streams
 
 1. **Sync → Microtask (fully drained) → one Event → back to checking Microtasks** — this is the foundation for everything else
 2. `await` only pauses its own function, not the whole program
@@ -332,4 +343,238 @@ searchStream
 
 ---
 
-*Next in the roadmap: Isolates 🔥*
+## 4️⃣ Isolates
+
+### Why Isolates Exist
+
+Dart is **single-threaded** by default. All your code runs on the **Main Isolate** (also called the UI Isolate in Flutter), which is responsible for both:
+
+- Executing your code (business logic)
+- Rendering and updating the UI (60/120 fps)
+
+If you run a heavy operation (a large loop, JSON parsing, image processing) directly on this thread, it **blocks the CPU** until it finishes. The result: the UI **freezes / janks**, because nothing is free to paint the next frame.
+
+**Isolate** = a completely separate thread with **its own private memory**. Unlike threads in languages like Java, isolates do **not share memory**. This means:
+
+- No race conditions — there's no shared memory to read/write from two places at once
+- Communication between isolates happens **only through messages**, never through shared variables
+- Any data sent between isolates is **copied**, never shared directly
+
+---
+
+### `compute()` — The Simple, Built-in Way
+
+`compute` is **not** a Dart language feature — it's a **helper function provided by Flutter** (`package:flutter/foundation.dart`). Internally, it's just a wrapper around `Isolate.spawn` + `SendPort`/`ReceivePort`, built for the common case: run one function, get one result, done.
+
+```dart
+int heavyCalculation(int n) {
+  int result = 0;
+  for (int i = 0; i < n; i++) {
+    result += i * i;
+  }
+  return result;
+}
+
+final result = await compute(heavyCalculation, 1000000000);
+```
+
+**Rules:**
+
+- The function passed must be a **top-level function** or a **static method** — never a closure capturing outside variables (the new isolate has no access to the caller's memory)
+- Takes **only one input parameter** (bundle multiple values into an object/list if needed)
+- Best for **one-shot, fire-and-forget computations**
+
+#### ⚠️ When NOT to use `compute`
+
+Spawning an isolate has a **real cost**: creating it takes time, and copying data in/out has overhead. If the computation itself is cheap (microseconds — e.g., a distance calculation between two GPS points using the Haversine formula: a few `sin`/`cos`/`sqrt`/`atan2` calls), wrapping it in `compute` can make things **slower**, not faster, because the isolate overhead outweighs the actual work.
+
+**Rule of thumb:** only reach for `compute`/`Isolate.spawn` when the operation takes a _noticeable_ amount of time (large JSON parsing, encryption, image processing, loops over thousands/millions of items). Simple math on two points — just run it on the main isolate.
+
+---
+
+### `Isolate.spawn` — Manual, Long-lived Communication
+
+Use this when you need an isolate that stays alive and can send/receive messages repeatedly, not just once.
+
+#### Simplest form (no return value)
+
+```dart
+void simpleEntryPoint(String message) {
+  print('Isolate says: $message');
+}
+
+void main() async {
+  await Isolate.spawn(simpleEntryPoint, 'Hello from main!');
+}
+```
+
+**Mandatory rules:**
+
+- The entry function takes **exactly one parameter**
+- Must be a **top-level function** or **static method** (no closures over outer variables)
+
+#### Two-way communication (the pattern you'll actually use)
+
+**Handshake sequence:**
+
+1. Main isolate creates a `ReceivePort` to listen for replies
+2. Main isolate calls `Isolate.spawn`, passing its own `sendPort` as the single allowed parameter
+3. The new (worker) isolate creates its **own** `ReceivePort`, and sends its `sendPort` back to main through the port it received
+4. Now both sides hold a `SendPort` to the other — communication can flow both ways, repeatedly, for as long as the isolate is alive
+
+```dart
+import 'dart:isolate';
+
+// ---- Runs inside the new isolate ----
+void workerEntryPoint(SendPort mainSendPort) {
+  final workerReceivePort = ReceivePort();
+
+  // Send our own SendPort back to main so it can send us tasks
+  mainSendPort.send(workerReceivePort.sendPort);
+
+  // Keep listening for incoming work
+  workerReceivePort.listen((message) {
+    if (message is int) {
+      final result = message * message;
+      mainSendPort.send(result);
+    }
+  });
+}
+
+// ---- Runs on the main isolate ----
+class IsolateWorker {
+  Isolate? _isolate;
+  SendPort? _workerSendPort;
+  final ReceivePort _mainReceivePort = ReceivePort();
+
+  Future<void> spawn() async {
+    _isolate = await Isolate.spawn(
+      workerEntryPoint,
+      _mainReceivePort.sendPort,
+    );
+
+    // First message received is the worker's own SendPort
+    _workerSendPort = await _mainReceivePort.first as SendPort;
+
+    // After that, listen for actual results
+    _mainReceivePort.listen((message) {
+      print('Result received: $message');
+    });
+  }
+
+  void sendTask(int value) {
+    _workerSendPort?.send(value);
+  }
+
+  void dispose() {
+    _isolate?.kill(priority: Isolate.immediate);
+    _mainReceivePort.close();
+  }
+}
+```
+
+**Notes:**
+
+- Use `.first` to grab only the initial handshake message, then switch to `.listen()` for subsequent messages — `.first` stops listening after one message.
+- Always close the isolate when done: `_isolate?.kill(priority: Isolate.immediate)` (or `Isolate.beforeNextEvent` to let it finish its current task first). Forgetting this leaks resources.
+
+#### Error handling
+
+Exceptions inside an isolate do **not** propagate automatically like a normal try/catch — you must register an `onError` port:
+
+```dart
+final errorPort = ReceivePort();
+_isolate = await Isolate.spawn(
+  workerEntryPoint,
+  _mainReceivePort.sendPort,
+  onError: errorPort.sendPort,
+);
+
+errorPort.listen((error) {
+  print('Isolate error: $error');
+});
+```
+
+---
+
+### `IsolateNameServer` — Reaching an Isolate You Don't Have a Direct Reference To
+
+A third mechanism, separate from the direct `SendPort` handoff above.
+
+**When to use it:** when you don't hold a direct reference to the target isolate's `SendPort` — either because the isolate was created by something outside your control (e.g., a plugin's background message handler, like Firebase Messaging), or because you need to reach it from a distant part of the app that has no chain of references back to it.
+
+It works like a **named registry / phonebook** for `SendPort`s:
+
+```dart
+// Inside the isolate that wants to be reachable by name:
+IsolateNameServer.removePortNameMapping(kPortName); // clear any stale mapping
+final registered = IsolateNameServer.registerPortWithName(
+  receivePort.sendPort,
+  kPortName,
+);
+
+// From anywhere else in the app:
+final sendPort = IsolateNameServer.lookupPortByName(kPortName);
+sendPort?.send(someCommand);
+```
+
+**Real example** — a Firebase `onBackgroundMessage` handler that loops a notification sound while the app is closed, and needs to be stoppable from elsewhere in the app once the user dismisses the notification:
+
+```dart
+@pragma('vm:entry-point')
+Future<void> handleBackgroundMessage(RemoteMessage message) async {
+  final receivePort = ReceivePort();
+  try {
+    IsolateNameServer.removePortNameMapping(kNotificationSoundPortName);
+    IsolateNameServer.registerPortWithName(
+      receivePort.sendPort,
+      kNotificationSoundPortName,
+    );
+
+    bool shouldStop = false;
+    receivePort.listen((dynamic data) {
+      if (data == stopNotificationSoundCommand) {
+        shouldStop = true;
+        audioPlayerHelper.stop();
+        receivePort.close();
+        IsolateNameServer.removePortNameMapping(kNotificationSoundPortName);
+      }
+    });
+
+    await audioPlayerHelper.init();
+    await audioPlayerHelper.loopSound();
+
+    while (!shouldStop && audioPlayerHelper.isPlaying) {
+      await Future.delayed(const Duration(milliseconds: 500));
+    }
+  } finally {
+    receivePort.close();
+    IsolateNameServer.removePortNameMapping(kNotificationSoundPortName);
+  }
+}
+```
+
+Here, the Flutter engine/Firebase plugin spawns the isolate automatically when a message arrives while the app is closed — there's no direct `Isolate.spawn` call in app code, so the only way to reach that isolate's port later (e.g., to send a "stop the sound" command) is by name.
+
+---
+
+### Three Communication Mechanisms — Summary
+
+| Mechanism                                       | Use when                                                                                                                                                                                                                                              |
+| ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `compute()`                                     | One heavy, one-shot task; you call it and await a single result                                                                                                                                                                                       |
+| `Isolate.spawn` + `SendPort` passed at creation | You create the isolate yourself and keep a direct reference to talk to it throughout its life                                                                                                                                                         |
+| `IsolateNameServer` (named ports)               | You need to reach an isolate's port from somewhere that has no direct reference to it — either because the isolate wasn't created by your code, or because a distant part of the app needs to reach it without passing the `SendPort` around manually |
+
+---
+
+## ✅ Key Takeaways: Isolates
+
+1. **Isolates are not free.** Creation + data copying has real overhead — only use them when the actual work is heavy enough to justify it. A simple math calculation (e.g., distance between two coordinates) does _not_ need an isolate.
+2. **No shared memory, ever.** All communication is message-passing; data sent between isolates is copied.
+3. Entry point functions must be **top-level or static** — no closures.
+4. Always **close isolates** when you're done with them (`kill()`), and always register an **`onError`** port if you need to catch exceptions from inside the isolate.
+
+---
+
+_Next in the roadmap: Advanced Dart Language Features (Generics, Sealed Classes, Records, Pattern Matching) 🔥_
