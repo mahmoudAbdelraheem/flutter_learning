@@ -9,6 +9,7 @@
 ### The Problem They Solve
 
 Without generics, you'd duplicate the same class for every type:
+
 ```dart
 class IntBox { final int value; IntBox(this.value); }
 class StringBox { final String value; StringBox(this.value); }
@@ -87,6 +88,7 @@ class ApiResponse<T> with _$ApiResponse<T> {
 ### The Problem
 
 A plain enum/flag-based state loses the connection between "status" and "which fields are actually available":
+
 ```dart
 class ApiState {
   final ApiStatus status;
@@ -124,12 +126,12 @@ switch (state) {
 
 ### `base` / `interface` / `final` (quick reference)
 
-| Modifier | Meaning |
-|---|---|
-| `sealed` | subclasses must live in the same file; can't be instantiated directly |
-| `final` | can't be extended or implemented outside the file at all |
-| `base` | can be extended but not implemented (preserves internal implementation) |
-| `interface` | can be implemented but not extended (pure contract) |
+| Modifier    | Meaning                                                                 |
+| ----------- | ----------------------------------------------------------------------- |
+| `sealed`    | subclasses must live in the same file; can't be instantiated directly   |
+| `final`     | can't be extended or implemented outside the file at all                |
+| `base`      | can be extended but not implemented (preserves internal implementation) |
+| `interface` | can be implemented but not extended (pure contract)                     |
 
 In everyday app code, `sealed` covers ~95% of use cases (API states, Result types, Failures). The others matter more when designing packages/libraries.
 
@@ -203,12 +205,12 @@ for (final (name, age) in students) {
 
 ### When to Use a Record vs a Class
 
-| Use a **Record** when... | Use a **Class/Freezed** when... |
-|---|---|
+| Use a **Record** when...                          | Use a **Class/Freezed** when...                                       |
+| ------------------------------------------------- | --------------------------------------------------------------------- |
 | Value is temporary, local, used in one place only | The data is a real domain concept (Entity/Model) passed across layers |
-| No behavior/methods needed on it | Needs methods or extra logic |
-| Small number of clearly-meaningful values (2–3) | Needs serialization (`fromJson`/`toJson`) |
-| Don't need complex immutability or `copyWith` | Needs `copyWith`, `==`, `hashCode` out of the box (Freezed) |
+| No behavior/methods needed on it                  | Needs methods or extra logic                                          |
+| Small number of clearly-meaningful values (2–3)   | Needs serialization (`fromJson`/`toJson`)                             |
+| Don't need complex immutability or `copyWith`     | Needs `copyWith`, `==`, `hashCode` out of the box (Freezed)           |
 
 ---
 
@@ -289,12 +291,12 @@ switch (result) {
 
 ### Decision Table
 
-| Situation | Result |
-|---|---|
-| Pattern matched + no guard | ✅ Executes this case, stops immediately |
-| Pattern matched + guard → `true` | ✅ Executes this case, stops immediately |
+| Situation                         | Result                                         |
+| --------------------------------- | ---------------------------------------------- |
+| Pattern matched + no guard        | ✅ Executes this case, stops immediately       |
+| Pattern matched + guard → `true`  | ✅ Executes this case, stops immediately       |
 | Pattern matched + guard → `false` | ❌ Skips this case entirely, moves to the next |
-| Pattern doesn't match | ❌ Skips this case, moves to the next |
+| Pattern doesn't match             | ❌ Skips this case, moves to the next          |
 
 ### Note for Developers Coming From C / Java / JavaScript
 
@@ -313,4 +315,4 @@ Those languages default to **fall-through**: once a case matches, execution cont
 
 ---
 
-*Next in the roadmap: Isolates 🔥 (still pending from Phase 1) → Memory Management → Flutter Internals & Rendering*
+_Next in the roadmap: (Phase 3) → Memory Management → Flutter Internals & Rendering_
