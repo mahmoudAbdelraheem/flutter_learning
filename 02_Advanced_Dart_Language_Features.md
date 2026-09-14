@@ -304,6 +304,116 @@ Those languages default to **fall-through**: once a case matches, execution cont
 
 ---
 
+## 5️⃣ Memory Management
+
+### Stack vs Heap
+
+- **Stack**: stores simple, function-local variables with a known size (`int x = 5` inside a function). Automatically cleared the instant the function returns. Fast, LIFO.
+- **Heap**: stores **Objects** (classes, Lists, Maps — anything created via a constructor). A variable in the Stack just _points_ to an Object living in the Heap.
+
+```dart
+void createUser() {
+  final user = User(name: 'Ahmed'); // the User object lives in the Heap
+                                      // "user" is just a pointer/reference to it
+}
+```
+
+> Note: a field (`_count` in a State class) that lives **inside an Object** is still stored in the Heap along with the object itself — it's not "in the Stack" just because it's an `int`. What actually matters for leaks is never the data type or its storage location — it's **whether something still holds a reference to it**.
+
+### Garbage Collection (GC)
+
+Dart has no manual memory management (no `malloc`/`free`). A background **Garbage Collector** periodically asks, for every Heap object:
+
+> **"Does anything still hold a reference to this object?"**
+
+- **Yes** → the object stays in memory
+- **No** → it's "garbage" and gets collected
+
+### The Real Danger: Unintended Lingering References
+
+The GC works perfectly _as long as nothing unexpectedly keeps holding a reference_. This is exactly what causes memory leaks in Flutter.
+
+**Closures capture references implicitly.** A `Timer`, `StreamSubscription`, or any callback that uses `this` (or any instance member) inside it captures a reference to the _entire enclosing object_ — not just the specific field it uses:
+
+```dart
+class _MyWidgetState extends State<MyWidget> {
+  late Timer _timer;
+  String someData = 'some data';
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      print(someData); // this closure captures `this` — the whole State object
+    });
+  }
+  // ❌ missing dispose() — the Timer keeps the State alive forever
+}
+```
+
+**The fix:**
+
+```dart
+@override
+void dispose() {
+  _timer.cancel(); // breaks the reference, GC can now collect the State
+  super.dispose();
+}
+```
+
+### The Golden Rule
+
+> **`dispose()` only runs the code you explicitly write inside it.** It is not magic — it does not automatically sever any references. If something with a longer lifetime than the widget (a Singleton, a global EventBus, a static variable, an un-cancelled periodic Timer) still holds a reference to the widget's State, that State **leaks forever**, even though `super.dispose()` was called.
+
+### Common Leak Sources (all the same underlying principle)
+
+| Source                                         | Why it leaks                                                                      | Fix                                       |
+| ---------------------------------------------- | --------------------------------------------------------------------------------- | ----------------------------------------- |
+| `StreamSubscription`                           | listener closure holds a reference to the State                                   | `subscription.cancel()` in `dispose()`    |
+| `StreamController`                             | the controller itself stays "alive" if never closed                               | `controller.close()`                      |
+| `AnimationController`                          | holds a reference to its `TickerProvider` (often the State itself)                | `controller.dispose()`                    |
+| `TextEditingController` / `ScrollController`   | registers internal listeners                                                      | `controller.dispose()`                    |
+| `Timer`                                        | callback closure captures `this`                                                  | `timer.cancel()`                          |
+| Subscribing to a **global Singleton/EventBus** | the Singleton outlives the widget and keeps holding the closure/reference forever | explicitly `unsubscribe()` in `dispose()` |
+
+**The Singleton case is the most dangerous one** — unlike a one-shot `Timer` that eventually releases its reference on its own, a Singleton holds the reference **forever**, for the entire lifetime of the app, unless you manually unsubscribe.
+
+### The Real Test (not data type, not Stack vs Heap)
+
+> The only question that matters: **"Does anything with a lifetime longer than this widget still hold a reference to it (or any part of it)?"**
+>
+> - **No** → the GC collects it normally the moment the widget is removed — no `dispose()` even needed for this specific concern (e.g. a plain counter widget with just an `int _count` field and no subscriptions).
+> - **Yes** (Singleton, static field, global EventBus, un-cancelled periodic Timer) → you must manually break the reference in `dispose()`, or it's a guaranteed leak.
+
+---
+
+### Applied Example: Immutability in BLoC/Freezed State
+
+This same Heap/Reference principle explains a very common real-world BLoC bug: mutating a `List` inside a Freezed state instead of replacing it.
+
+```dart
+// ❌ Wrong — mutates the same List object in the Heap
+void onSelectedIdsChange(String id) {
+  state.selectedIds.add(id);
+  emit(state.copyWith(selectedIds: state.selectedIds)); // same reference!
+}
+
+// ✅ Correct — creates a brand-new List object
+void onSelectedIdsChange(List<String> selectedIds) {
+  emit(state.copyWith(selectedIds: [...selectedIds]));
+}
+```
+
+**Why the UI doesn't rebuild without the spread `[...]`:** `oldState.selectedIds` and `newState.selectedIds` point to the **exact same object** in the Heap. Freezed's `==` does deep equality, but since both sides are literally the same object (already holding the new values), the comparison always returns `true` — Bloc concludes "nothing changed" and skips the rebuild.
+
+Using `[...selectedIds]` creates a **new object** in the Heap, so `oldState.selectedIds` and `newState.selectedIds` are genuinely different objects with different content → Freezed equality correctly detects the change → Bloc rebuilds the UI.
+
+**Is this a memory leak?** No. Once the new state is emitted, nothing holds a reference to the old List anymore — the Bloc itself now only points to the new state, so the GC collects the old one normally. This is a completely different situation from the Singleton case: here, nothing with a longer lifetime is holding onto the old object.
+
+> **General principle (State Immutability):** State in BLoC/Redux/any state management must be treated as immutable — never mutate an existing object in place; always create a new one with the updated values and replace the old one via `emit()`. This applies to `List`, `Map`, `Set`, or any collection inside the state, and it's also what keeps Bloc as the single source of truth for the UI.
+
+---
+
 ## ✅ Key Takeaways From Phase 2
 
 1. Generics give you reusable, type-safe code — but generic Freezed models need `genericArgumentFactories: true` + a `fromJsonT` callback for JSON to work correctly.
@@ -312,7 +422,10 @@ Those languages default to **fall-through**: once a case matches, execution cont
 4. `$1`/`$2` only apply to positional record fields; named fields are accessed by name only.
 5. Pattern matching combines checking and extracting values in a single step, and pairs powerfully with guard clauses (`when`).
 6. **`switch` stops at the first fully-matching case** — always order guarded/specific cases before general ones.
+7. Memory leaks are never about data type or Stack vs Heap — they're about **lingering references** from something that outlives the widget (Singletons, global services, un-cancelled Timers/Subscriptions/Controllers).
+8. `dispose()` only does what you explicitly write in it — it doesn't magically sever references.
+9. State must be immutable: replace collections (`List`/`Map`/`Set`) with new objects via `emit()`/`copyWith`, never mutate them in place — this is what makes Bloc detect changes and rebuild the UI correctly.
 
 ---
 
-_Next in the roadmap: (Phase 3) → Memory Management → Flutter Internals & Rendering_
+_Next in the roadmap: Flutter Internals & Rendering 🏗️_
