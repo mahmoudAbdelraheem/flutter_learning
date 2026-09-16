@@ -234,7 +234,7 @@ Both formulas give the same result mathematically; only the order of operations 
 > It's still a good habit and a famous interview question. This exact bug existed in
 > Java's `Arrays.binarySearch` for years until it was reported in 2006.
 
-### a nice hit from CLAUDE 😍
+### a nice hint from CLAUDE 😍
 
 ---
 
